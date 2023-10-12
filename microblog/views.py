@@ -1,10 +1,8 @@
 from rest_framework import generics
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework import permissions 
 from .serializers import *
 from .models import Post
 from .permissions import *
-from django.urls import reverse_lazy
 
 
 class PostListView(generics.ListCreateAPIView):
@@ -20,6 +18,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
+###
 class CommentListView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
@@ -31,4 +30,18 @@ class CommentListView(generics.ListCreateAPIView):
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     queryset = Comment.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly] 
+
+###
+class TagListView(generics.ListCreateAPIView):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly] 
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class TagDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly] 

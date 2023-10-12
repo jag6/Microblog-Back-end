@@ -15,6 +15,14 @@ class Post(models.Model):
     def __str__(self):
 	    return self.title
     
+class Tag(models.Model):
+    name = models.CharField(max_length=100, blank=False, default='')
+    author = models.ForeignKey(User, related_name='tags', on_delete=models.DO_NOTHING)
+    posts = models.ManyToManyField(Post, related_name='tags', blank=True)
+
+    def __str__(self):
+        return self.name
+    
 class Comment(models.Model):
     author = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
@@ -23,3 +31,6 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created_on']
+
+    def __str__(self):
+        return self.body

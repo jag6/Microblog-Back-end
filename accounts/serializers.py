@@ -3,13 +3,24 @@ from django.contrib.auth import authenticate
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from rest_flex_fields import FlexFieldsModelSerializer
+from microblog.serializers import *
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(FlexFieldsModelSerializer):
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    tags = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'posts', 'comments')
-        depth = 1
+        fields = ('first_name', 'last_name', 'username', 'email', 'posts', 'comments', 'tags')
+
+        expandable_fields = {
+            'posts': (PostSerializer, {'many': True}),
+            'comments': (CommentSerializer, {'many': True}),
+            'tags': (TagSerializer, {'many': True})
+        }
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
