@@ -10,5 +10,7 @@ urlpatterns = [
     path('auth/update-profile/<int:pk>/', UpdateProfileView.as_view(), name='update-profile'),
     ### users/
     path('users/', UserListView.as_view(), name='users'),
-    path('users/<int:pk>/', UserDetailView.as_view(), name='user')
+    path('users/<int:pk>/', UserDetailView.as_view(), name='user'),
+    path('users/follow/', FollowListView.as_view(), name='follow'),
+    path('users/follow/<int:pk>/', FollowDetailView.as_view(), name='update-follow')
 ]

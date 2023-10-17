@@ -5,21 +5,35 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_flex_fields import FlexFieldsModelSerializer
 from microblog.serializers import *
+from  . models import *
 
+
+class FollowSerializer(FlexFieldsModelSerializer):
+    follower = serializers.ReadOnlyField(source='follower.username')
+
+    class Meta:
+        model = Follow
+        fields = ('follower', 'followee')
 
 class UserSerializer(FlexFieldsModelSerializer):
     posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     tags = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    following = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'posts', 'comments', 'tags')
+        fields = ('pk', 'first_name', 'last_name', 'username', 'email', 'posts', 'comments', 'tags', 'likes', 'following', 'followers')
 
         expandable_fields = {
             'posts': (PostSerializer, {'many': True}),
             'comments': (CommentSerializer, {'many': True}),
-            'tags': (TagSerializer, {'many': True})
+            'tags': (TagSerializer, {'many': True}),
+            'likes': (LikeSerializer, {'many': True}),
+            'following': (FollowSerializer, {'many': True}),
+            'followers': (FollowSerializer, {'many': True}),
         }
 
 class RegisterSerializer(serializers.ModelSerializer):

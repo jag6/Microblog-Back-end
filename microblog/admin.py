@@ -15,3 +15,4 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('author', 'body',)
     
 admin.site.register(Tag)
+admin.site.register(Like)
